@@ -320,11 +320,7 @@
     <span class="block-tag sell">Stock rotates daily</span>
   </div>
 
-  <div class="sell-shell">
-    <h3>The shelves are always moving</h3>
-    <p>Our sell stock changes with what walks through the door, so we don't keep a fixed list online. Swing by or give us a call — if we don't have it today, we might tomorrow.</p>
-    <div class="ghost-chips" id="ghostChips"></div>
-  </div>
+  <div id="sellList"></div>
 </section>
 
 <footer>
@@ -385,42 +381,44 @@ const categories = [
   ]}
 ];
 
+const sellCategories = [
+  { name: "General", items: [
+    ["Outfit Bags",5000]
+  ]}
+];
+
 function fmt(n){
   return "£" + n.toLocaleString("en-GB", {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
-const listEl = document.getElementById("categoryList");
-categories.forEach(cat => {
-  const catDiv = document.createElement("div");
-  catDiv.className = "category";
-  catDiv.dataset.cat = cat.name;
+function renderCategories(data, containerId){
+  const listEl = document.getElementById(containerId);
+  data.forEach(cat => {
+    const catDiv = document.createElement("div");
+    catDiv.className = "category";
+    catDiv.dataset.cat = cat.name;
 
-  const head = document.createElement("div");
-  head.className = "category-head";
-  head.innerHTML = `<span class="punch"></span><h3>${cat.name}</h3><span class="count">${cat.items.length} item${cat.items.length>1?'s':''}</span>`;
-  catDiv.appendChild(head);
+    const head = document.createElement("div");
+    head.className = "category-head";
+    head.innerHTML = `<span class="punch"></span><h3>${cat.name}</h3><span class="count">${cat.items.length} item${cat.items.length>1?'s':''}</span>`;
+    catDiv.appendChild(head);
 
-  const itemsWrap = document.createElement("div");
-  itemsWrap.className = "items";
-  cat.items.forEach(([name, price]) => {
-    const row = document.createElement("div");
-    row.className = "item-row";
-    row.dataset.name = name.toLowerCase();
-    row.innerHTML = `<span class="item-name">${name}</span><span class="leader"></span><span class="item-price">${fmt(price)}</span>`;
-    itemsWrap.appendChild(row);
+    const itemsWrap = document.createElement("div");
+    itemsWrap.className = "items";
+    cat.items.forEach(([name, price]) => {
+      const row = document.createElement("div");
+      row.className = "item-row";
+      row.dataset.name = name.toLowerCase();
+      row.innerHTML = `<span class="item-name">${name}</span><span class="leader"></span><span class="item-price">${fmt(price)}</span>`;
+      itemsWrap.appendChild(row);
+    });
+    catDiv.appendChild(itemsWrap);
+    listEl.appendChild(catDiv);
   });
-  catDiv.appendChild(itemsWrap);
-  listEl.appendChild(catDiv);
-});
+}
 
-// ghost chips for sell section, mirrored from buy categories
-const ghostWrap = document.getElementById("ghostChips");
-categories.forEach(cat => {
-  const chip = document.createElement("span");
-  chip.className = "ghost-chip";
-  chip.textContent = cat.name;
-  ghostWrap.appendChild(chip);
-});
+renderCategories(categories, "categoryList");
+renderCategories(sellCategories, "sellList");
 
 // search filter
 const search = document.getElementById("itemSearch");
